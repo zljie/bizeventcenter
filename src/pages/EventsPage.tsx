@@ -21,6 +21,9 @@ import {
   EyeOutlined,
 } from '@ant-design/icons'
 import type { PublishedEvent } from '../types'
+import type { FunctionRequirement } from '../types/requirements'
+import RequirementTooltip from '../components/RequirementTooltip'
+import { getRequirementsByFunctionIds } from '../utils/requirementsHelper'
 
 const { Search } = Input
 const { Option } = Select
@@ -34,6 +37,7 @@ export default function EventsPage() {
   const [selectedStatus, setSelectedStatus] = useState<string>('全部')
   const [searchText, setSearchText] = useState('')
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
+  const [requirements, setRequirements] = useState<FunctionRequirement[]>([])
   const [form] = Form.useForm()
 
   useEffect(() => {
@@ -43,6 +47,10 @@ export default function EventsPage() {
         const data = await response.json()
         setEvents(data)
         setFilteredEvents(data)
+
+        // 加载需求数据
+        const reqs = await getRequirementsByFunctionIds(['F011', 'F012', 'F013', 'F014', 'F015'])
+        setRequirements(reqs)
       } catch (error) {
         console.error('加载数据失败:', error)
         message.error('加载事件数据失败')
@@ -279,7 +287,17 @@ export default function EventsPage() {
 
   return (
     <Space direction="vertical" size="large" style={{ width: '100%' }}>
-      <Card>
+      <Card
+        title={
+          <Space>
+            <span>事件管理</span>
+            <RequirementTooltip
+              functionIds={['F011', 'F012', 'F013', 'F014', 'F015']}
+              requirements={requirements}
+            />
+          </Space>
+        }
+      >
         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
           <Space style={{ width: '100%', justifyContent: 'space-between' }}>
             <Space>

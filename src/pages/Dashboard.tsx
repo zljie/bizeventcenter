@@ -10,11 +10,15 @@ import {
   SendOutlined,
 } from '@ant-design/icons'
 import type { PublishedEvent, EventLog } from '../types'
+import type { FunctionRequirement } from '../types/requirements'
+import RequirementTooltip from '../components/RequirementTooltip'
+import { getRequirementsByFunctionIds } from '../utils/requirementsHelper'
 
 export default function Dashboard() {
   const [events, setEvents] = useState<PublishedEvent[]>([])
   const [logs, setLogs] = useState<EventLog[]>([])
   const [loading, setLoading] = useState(true)
+  const [requirements, setRequirements] = useState<FunctionRequirement[]>([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,6 +31,10 @@ export default function Dashboard() {
         const logsData = await logsRes.json()
         setEvents(eventsData)
         setLogs(logsData)
+
+        // 加载需求数据
+        const reqs = await getRequirementsByFunctionIds(['F031', 'F036'])
+        setRequirements(reqs)
       } catch (error) {
         console.error('加载数据失败:', error)
       } finally {
@@ -146,6 +154,15 @@ export default function Dashboard() {
 
   return (
     <Space direction="vertical" size="large" style={{ width: '100%' }}>
+      <Card bordered={false} style={{ marginBottom: -8 }}>
+        <Space align="center">
+          <span style={{ fontSize: 16, fontWeight: 500 }}>系统运行状态</span>
+          <RequirementTooltip
+            functionIds={['F031', 'F036']}
+            requirements={requirements}
+          />
+        </Space>
+      </Card>
       <Row gutter={16}>
         <Col span={6}>
           <Card>

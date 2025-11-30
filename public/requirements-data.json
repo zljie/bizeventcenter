@@ -1,0 +1,197 @@
+{
+  "projectName": "企业中间件业务事件中心POC项目",
+  "projectGoal": "构建统一的企业中间件业务事件中心",
+  "deployUrl": "https://0ma6ya0vwben.space.minimaxi.com",
+  "userStories": [
+    {
+      "role": "石油化工业务系统架构师",
+      "description": "基于行业标准化的石油化工事件模版快速定义业务事件",
+      "demands": [
+        "在统一平台上管理所有业务系统的业务事件定义",
+        "通过可视化界面配置事件的分类、属性和触发条件",
+        "为新业务系统提供标准的事件注册接口和文档"
+      ],
+      "value": "快速构建标准化的业务事件架构，降低系统集成复杂度"
+    },
+    {
+      "role": "业务系统开发者",
+      "description": "通过Web界面查看已定义的事件模版和事件属性",
+      "demands": [
+        "基于模版快速创建符合标准的业务事件定义",
+        "通过API接口发布业务事件，无需关心底层分发机制",
+        "查看事件的发布状态和消费情况"
+      ],
+      "value": "简化开发流程，专注于业务逻辑实现"
+    }
+  ],
+  "modules": [
+    {
+      "moduleId": "M01",
+      "moduleName": "业务事件注册模块",
+      "moduleNameEn": "Message Subject Registration",
+      "functions": [
+        {
+          "functionId": "F001",
+          "functionName": "事件模版选择界面",
+          "description": "提供SAP ERP石油化工类事件模版选择界面，支持按分类浏览",
+          "acceptanceCriteria": "用户可以快速找到所需模版，模版信息展示完整",
+          "notes": "基于石油化工行业标准，提供19个预定义模版"
+        },
+        {
+          "functionId": "F002",
+          "functionName": "事件属性配置界面",
+          "description": "提供事件属性配置表单，包括事件ID、名称、业务域等",
+          "acceptanceCriteria": "表单验证完整，支持必填项校验和格式验证",
+          "notes": "支持事件ID唯一性检查和业务规则验证"
+        },
+        {
+          "functionId": "F003",
+          "functionName": "事件分类管理",
+          "description": "提供按生产、采购、销售、库存、安全等分类的事件管理",
+          "acceptanceCriteria": "分类导航清晰，支持分类筛选和搜索",
+          "notes": "五大分类体系，每个分类包含多个子分类"
+        },
+        {
+          "functionId": "F004",
+          "functionName": "事件数据结构定义",
+          "description": "提供JSON Schema格式的事件数据结构编辑器",
+          "acceptanceCriteria": "支持语法高亮、实时预览、格式校验",
+          "notes": "提供可视化JSON编辑器，支持语法高亮和实时校验"
+        },
+        {
+          "functionId": "F005",
+          "functionName": "事件模版保存管理",
+          "description": "提供事件模版的保存、编辑、删除、复制功能",
+          "acceptanceCriteria": "操作响应及时，支持撤销/重做和数据恢复",
+          "notes": "支持版本控制和草稿功能"
+        }
+      ]
+    },
+    {
+      "moduleId": "M02",
+      "moduleName": "业务事件发布大厅模块",
+      "moduleNameEn": "Event Publishing Center",
+      "functions": [
+        {
+          "functionId": "F011",
+          "functionName": "事件列表展示",
+          "description": "提供事件列表的表格展示，支持排序、筛选、分页",
+          "acceptanceCriteria": "支持多条件筛选，响应时间<500ms",
+          "notes": "高性能表格，支持虚拟滚动和高级筛选"
+        },
+        {
+          "functionId": "F012",
+          "functionName": "事件状态管理",
+          "description": "提供事件状态的可视化管理（草稿、已发布、已停用）",
+          "acceptanceCriteria": "状态切换有确认对话框，支持批量操作",
+          "notes": "直观的颜色状态指示，支持批量状态变更"
+        },
+        {
+          "functionId": "F013",
+          "functionName": "新增/编辑事件",
+          "description": "提供事件定义的新增和编辑界面，支持模版选择",
+          "acceptanceCriteria": "表单数据完整性校验，支持自动保存草稿",
+          "notes": "智能表单，支持自动补全和实时验证"
+        },
+        {
+          "functionId": "F014",
+          "functionName": "事件搜索功能",
+          "description": "提供按事件名称、分类、状态的搜索功能",
+          "acceptanceCriteria": "支持模糊搜索，搜索结果实时更新",
+          "notes": "全文搜索，支持模糊匹配和搜索历史"
+        },
+        {
+          "functionId": "F015",
+          "functionName": "批量操作功能",
+          "description": "提供批量发布、批量停用、批量删除操作",
+          "acceptanceCriteria": "支持多选，操作有进度提示和结果反馈",
+          "notes": "进度条显示，支持中断和错误处理"
+        }
+      ]
+    },
+    {
+      "moduleId": "M03",
+      "moduleName": "事件订阅中心模块",
+      "moduleNameEn": "Event Subscription Center",
+      "functions": [
+        {
+          "functionId": "F021",
+          "functionName": "订阅关系展示",
+          "description": "提供订阅关系的列表展示和管理界面",
+          "acceptanceCriteria": "订阅信息展示完整，支持订阅状态的实时更新",
+          "notes": "实时状态更新，支持订阅健康度监控"
+        },
+        {
+          "functionId": "F022",
+          "functionName": "新增订阅配置",
+          "description": "提供订阅关系的创建和配置界面",
+          "acceptanceCriteria": "支持事件选择、过滤条件设置、推送方式配置",
+          "notes": "可视化配置，支持条件预览和测试"
+        },
+        {
+          "functionId": "F023",
+          "functionName": "订阅规则设置",
+          "description": "提供订阅过滤条件和触发规则的可视化配置",
+          "acceptanceCriteria": "支持复杂条件配置，条件测试功能",
+          "notes": "可视化规则编辑器，支持规则测试"
+        },
+        {
+          "functionId": "F024",
+          "functionName": "订阅状态监控",
+          "description": "提供订阅状态和处理结果的监控界面",
+          "acceptanceCriteria": "支持实时状态监控，异常情况有告警提示",
+          "notes": "实时监控面板，异常告警机制"
+        },
+        {
+          "functionId": "F025",
+          "functionName": "消息推送配置",
+          "description": "提供Webhook、消息队列、邮件等推送方式配置",
+          "acceptanceCriteria": "支持多种推送方式，配置界面直观易用",
+          "notes": "统一的推送配置管理，支持协议适配"
+        }
+      ]
+    },
+    {
+      "moduleId": "M04",
+      "moduleName": "系统管理和监控模块",
+      "moduleNameEn": "System Management & Monitoring",
+      "functions": [
+        {
+          "functionId": "F031",
+          "functionName": "系统仪表盘",
+          "description": "提供系统整体运行状态的可视化仪表盘",
+          "acceptanceCriteria": "关键指标实时更新，支持多维度数据展示",
+          "notes": "实时数据大屏，支持多维度分析"
+        },
+        {
+          "functionId": "F032",
+          "functionName": "业务事件日志",
+          "description": "提供事件发布和消费的完整日志查询界面",
+          "acceptanceCriteria": "支持按时间、事件类型、状态等条件查询",
+          "notes": "高级日志查询，支持全文搜索"
+        },
+        {
+          "functionId": "F033",
+          "functionName": "用户权限管理",
+          "description": "提供用户登录和权限管理界面",
+          "acceptanceCriteria": "支持角色权限配置，权限控制精确到功能级",
+          "notes": "细粒度权限控制，支持动态权限"
+        },
+        {
+          "functionId": "F034",
+          "functionName": "系统设置管理",
+          "description": "提供系统参数和配置的Web管理界面",
+          "acceptanceCriteria": "配置修改实时生效，支持配置备份和恢复",
+          "notes": "热更新配置，支持配置版本管理"
+        },
+        {
+          "functionId": "F036",
+          "functionName": "业务监控服务",
+          "description": "提供事件发布、消费、订阅等业务指标监控",
+          "acceptanceCriteria": "支持实时指标采集，支持告警规则配置",
+          "notes": "实时指标采集，智能告警"
+        }
+      ]
+    }
+  ]
+}

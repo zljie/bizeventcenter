@@ -10,6 +10,7 @@ import {
   SettingOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  BookOutlined,
 } from '@ant-design/icons'
 
 const { Header, Sider, Content } = Layout
@@ -23,7 +24,7 @@ const menuItems = [
   {
     key: '/subjects',
     icon: <FileTextOutlined />,
-    label: <Link to="/subjects">消息主体登记</Link>,
+    label: <Link to="/subjects">消息主题登记</Link>,
   },
   {
     key: '/events',
@@ -45,15 +46,21 @@ const menuItems = [
     icon: <SettingOutlined />,
     label: <Link to="/settings">系统设置</Link>,
   },
+  {
+    key: '/requirements',
+    icon: <BookOutlined />,
+    label: <Link to="/requirements">需求总纲</Link>,
+  },
 ]
 
 const breadcrumbNameMap: Record<string, string> = {
   '/dashboard': '仪表板',
-  '/subjects': '消息主体登记',
+  '/subjects': '消息主题登记',
   '/events': '事件发布中心',
   '/subscriptions': '事件订阅',
   '/logs': '业务事件日志',
   '/settings': '系统设置',
+  '/requirements': '需求总纲',
 }
 
 export default function MainLayout() {

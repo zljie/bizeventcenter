@@ -20,6 +20,10 @@ import {
   FileTextOutlined,
 } from '@ant-design/icons'
 import type { EventTemplate } from '../types'
+import type { FunctionRequirement } from '../types/requirements'
+import RequirementTooltip from '../components/RequirementTooltip'
+import { getRequirementsByFunctionIds } from '../utils/requirementsHelper'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 const { Search } = Input
 const { Option } = Select
@@ -32,6 +36,9 @@ export default function SubjectsPage() {
   const [searchText, setSearchText] = useState('')
   const [detailModalVisible, setDetailModalVisible] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<EventTemplate | null>(null)
+  const [requirements, setRequirements] = useState<FunctionRequirement[]>([])
+  const navigate = useNavigate()
+  const location = useLocation()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,6 +47,10 @@ export default function SubjectsPage() {
         const data = await response.json()
         setTemplates(data)
         setFilteredTemplates(data)
+
+        // 加载需求数据
+        const reqs = await getRequirementsByFunctionIds(['F001', 'F002', 'F003', 'F004', 'F005'])
+        setRequirements(reqs)
       } catch (error) {
         console.error('加载数据失败:', error)
         message.error('加载事件模板失败')
@@ -49,6 +60,13 @@ export default function SubjectsPage() {
     }
     fetchData()
   }, [])
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    if (params.get('openRegister') === '1') {
+      navigate('/message/register')
+    }
+  }, [location.search, navigate])
 
   useEffect(() => {
     let filtered = templates
@@ -190,10 +208,16 @@ export default function SubjectsPage() {
     <Space direction="vertical" size="large" style={{ width: '100%' }}>
       <Card>
         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-          <div style={{ fontSize: 16, fontWeight: 500 }}>
-            <FileTextOutlined style={{ marginRight: 8 }} />
-            SAP ERP 石油化工业务事件模板库
-          </div>
+          <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
+            <div style={{ fontSize: 16, fontWeight: 500 }}>
+              <FileTextOutlined style={{ marginRight: 8 }} />
+              SAP ERP 石油化工业务事件模板库
+            </div>
+            <RequirementTooltip
+              functionIds={['F001', 'F002', 'F003', 'F004', 'F005']}
+              requirements={requirements}
+            />
+          </Space>
           <div style={{ color: '#666', fontSize: 14 }}>
             本模板库包含SAP ERP系统中常见的石油化工行业业务事件，涵盖生产、采购、销售、库存和安全等多个业务领域。
             选择合适的模板可以快速创建业务事件配置。
@@ -224,8 +248,8 @@ export default function SubjectsPage() {
               ))}
             </Select>
           </Space>
-          <Button type="primary" icon={<PlusOutlined />}>
-            基于模板创建事件
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/message/register')}>
+            消息登记
           </Button>
         </Space>
 
@@ -256,6 +280,17 @@ export default function SubjectsPage() {
         footer={[
           <Button key="cancel" onClick={() => setDetailModalVisible(false)}>
             关闭
+          </Button>,
+          <Button
+            key="create-from-template"
+            onClick={() => {
+              if (selectedTemplate) {
+                navigate(`/message/register?eventId=${encodeURIComponent(selectedTemplate.eventId)}&eventName=${encodeURIComponent(selectedTemplate.name)}&topic=${encodeURIComponent(selectedTemplate.name)}&templateId=${encodeURIComponent(selectedTemplate.id)}`)
+                setDetailModalVisible(false)
+              }
+            }}
+          >
+            模版创建事件
           </Button>,
           <Button
             key="use"
@@ -305,6 +340,23 @@ export default function SubjectsPage() {
               <pre style={{ margin: 0, background: '#f5f5f5', padding: 12, borderRadius: 4 }}>
                 {JSON.stringify(selectedTemplate.dataStructure, null, 2)}
               </pre>
+            </Descriptions.Item>
+            <Descriptions.Item label="关联模板" span={2}>
+              <div>
+                {(() => {
+                  const custom = JSON.parse(localStorage.getItem('customTemplates') || '[]')
+                  const related = custom.filter((t: any) => t.topic === selectedTemplate.name)
+                  return related.length > 0 ? (
+                    <Space wrap>
+                      {related.map((t: any) => (
+                        <Tag key={t.id} color="blue">{t.eventId}</Tag>
+                      ))}
+                    </Space>
+                  ) : (
+                    <span style={{ color: '#999' }}>暂无关联模板</span>
+                  )
+                })()}
+              </div>
             </Descriptions.Item>
           </Descriptions>
         )}

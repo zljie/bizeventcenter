@@ -26,6 +26,9 @@ import {
   CloseCircleOutlined,
 } from '@ant-design/icons'
 import type { Subscription } from '../types'
+import type { FunctionRequirement } from '../types/requirements'
+import RequirementTooltip from '../components/RequirementTooltip'
+import { getRequirementsByFunctionIds } from '../utils/requirementsHelper'
 
 const { Search } = Input
 const { Option } = Select
@@ -38,6 +41,7 @@ export default function SubscriptionsPage() {
   const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null)
   const [selectedStatus, setSelectedStatus] = useState<string>('全部')
   const [searchText, setSearchText] = useState('')
+  const [requirements, setRequirements] = useState<FunctionRequirement[]>([])
   const [form] = Form.useForm()
 
   useEffect(() => {
@@ -47,6 +51,10 @@ export default function SubscriptionsPage() {
         const data = await response.json()
         setSubscriptions(data)
         setFilteredSubscriptions(data)
+
+        // 加载需求数据
+        const reqs = await getRequirementsByFunctionIds(['F021', 'F022', 'F023', 'F024', 'F025'])
+        setRequirements(reqs)
       } catch (error) {
         console.error('加载数据失败:', error)
         message.error('加载订阅数据失败')
@@ -249,6 +257,15 @@ export default function SubscriptionsPage() {
 
   return (
     <Space direction="vertical" size="large" style={{ width: '100%' }}>
+      <Card bordered={false} style={{ marginBottom: -8 }}>
+        <Space align="center">
+          <span style={{ fontSize: 16, fontWeight: 500 }}>订阅统计</span>
+          <RequirementTooltip
+            functionIds={['F021', 'F022', 'F023', 'F024', 'F025']}
+            requirements={requirements}
+          />
+        </Space>
+      </Card>
       <Row gutter={16}>
         <Col span={6}>
           <Card>

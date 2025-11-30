@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import {
   Card,
   Form,
@@ -12,6 +13,9 @@ import {
   Typography,
 } from 'antd'
 import { SaveOutlined, SettingOutlined } from '@ant-design/icons'
+import type { FunctionRequirement } from '../types/requirements'
+import RequirementTooltip from '../components/RequirementTooltip'
+import { getRequirementsByFunctionIds } from '../utils/requirementsHelper'
 
 const { Title, Text } = Typography
 const { Option } = Select
@@ -19,6 +23,15 @@ const { TextArea } = Input
 
 export default function SettingsPage() {
   const [form] = Form.useForm()
+  const [requirements, setRequirements] = useState<FunctionRequirement[]>([])
+
+  useEffect(() => {
+    const loadRequirements = async () => {
+      const reqs = await getRequirementsByFunctionIds(['F033', 'F034'])
+      setRequirements(reqs)
+    }
+    loadRequirements()
+  }, [])
 
   const handleSave = async () => {
     try {
@@ -34,11 +47,19 @@ export default function SettingsPage() {
   return (
     <Space direction="vertical" size="large" style={{ width: '100%' }}>
       <Card>
-        <Title level={4}>
-          <SettingOutlined style={{ marginRight: 8 }} />
-          系统配置
-        </Title>
-        <Text type="secondary">配置业务事件中心的全局参数和行为</Text>
+        <Space direction="vertical" size="small" style={{ width: '100%' }}>
+          <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
+            <Title level={4} style={{ margin: 0 }}>
+              <SettingOutlined style={{ marginRight: 8 }} />
+              系统配置
+            </Title>
+            <RequirementTooltip
+              functionIds={['F033', 'F034']}
+              requirements={requirements}
+            />
+          </Space>
+          <Text type="secondary">配置业务事件中心的全局参数和行为</Text>
+        </Space>
       </Card>
 
       <Card title="基本设置">

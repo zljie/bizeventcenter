@@ -20,6 +20,9 @@ import {
   ReloadOutlined,
 } from '@ant-design/icons'
 import type { EventLog } from '../types'
+import type { FunctionRequirement } from '../types/requirements'
+import RequirementTooltip from '../components/RequirementTooltip'
+import { getRequirementsByFunctionIds } from '../utils/requirementsHelper'
 import dayjs from 'dayjs'
 
 const { Search } = Input
@@ -34,6 +37,7 @@ export default function LogsPage() {
   const [selectedLog, setSelectedLog] = useState<EventLog | null>(null)
   const [selectedStatus, setSelectedStatus] = useState<string>('全部')
   const [searchText, setSearchText] = useState('')
+  const [requirements, setRequirements] = useState<FunctionRequirement[]>([])
   const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(
     null
   )
@@ -49,6 +53,10 @@ export default function LogsPage() {
       const data = await response.json()
       setLogs(data)
       setFilteredLogs(data)
+
+      // 加载需求数据
+      const reqs = await getRequirementsByFunctionIds(['F032'])
+      setRequirements(reqs)
     } catch (error) {
       console.error('加载数据失败:', error)
     } finally {
@@ -180,7 +188,17 @@ export default function LogsPage() {
 
   return (
     <Space direction="vertical" size="large" style={{ width: '100%' }}>
-      <Card>
+      <Card
+        title={
+          <Space>
+            <span>日志统计</span>
+            <RequirementTooltip
+              functionIds={['F032']}
+              requirements={requirements}
+            />
+          </Space>
+        }
+      >
         <Space size="large">
           <div>
             <div style={{ fontSize: 14, color: '#666', marginBottom: 4 }}>总事件数</div>
