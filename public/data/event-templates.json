@@ -1,0 +1,363 @@
+[
+  {
+    "id": "prod-001",
+    "category": "生产事件",
+    "subcategory": "炼油生产",
+    "name": "常压蒸馏事件",
+    "eventId": "SAP_REFINE_ATMOS_DIST",
+    "businessDomain": "炼油生产",
+    "description": "监控常压蒸馏装置的运行状态和产品质量",
+    "triggerCondition": "温度超过设定阈值或产品收率异常",
+    "dataStructure": {
+      "temperature": "number",
+      "pressure": "number",
+      "feedRate": "number",
+      "productYield": "number",
+      "operatorId": "string"
+    },
+    "priority": "高",
+    "usageScenario": "实时监控常压蒸馏装置运行参数，当温度、压力异常或产品收率偏离目标值时触发事件"
+  },
+  {
+    "id": "prod-002",
+    "category": "生产事件",
+    "subcategory": "炼油生产",
+    "name": "催化裂化事件",
+    "eventId": "SAP_REFINE_CAT_CRACK",
+    "businessDomain": "炼油生产",
+    "description": "催化裂化装置运行状态监控",
+    "triggerCondition": "反应温度异常或催化剂活性下降",
+    "dataStructure": {
+      "reactionTemp": "number",
+      "catalystActivity": "number",
+      "feedStock": "string",
+      "gasolineYield": "number",
+      "timestamp": "datetime"
+    },
+    "priority": "高",
+    "usageScenario": "监控催化裂化装置的关键参数，确保汽油等产品的稳定产出"
+  },
+  {
+    "id": "prod-003",
+    "category": "生产事件",
+    "subcategory": "炼油生产",
+    "name": "加氢精制事件",
+    "eventId": "SAP_REFINE_HYDRO_TREAT",
+    "businessDomain": "炼油生产",
+    "description": "加氢精制装置工艺参数监控",
+    "triggerCondition": "氢气消耗量异常或硫含量超标",
+    "dataStructure": {
+      "hydrogenConsumption": "number",
+      "sulfurContent": "number",
+      "pressure": "number",
+      "temperature": "number",
+      "productQuality": "string"
+    },
+    "priority": "高",
+    "usageScenario": "监控加氢精制过程，确保产品满足环保和质量标准"
+  },
+  {
+    "id": "prod-004",
+    "category": "生产事件",
+    "subcategory": "化工反应",
+    "name": "聚合反应事件",
+    "eventId": "SAP_CHEM_POLYMER",
+    "businessDomain": "化工生产",
+    "description": "聚合反应过程监控",
+    "triggerCondition": "反应速率异常或分子量分布偏离",
+    "dataStructure": {
+      "reactionRate": "number",
+      "molecularWeight": "number",
+      "monomerConcentration": "number",
+      "initiatorAmount": "number",
+      "batchId": "string"
+    },
+    "priority": "中",
+    "usageScenario": "监控聚合反应过程参数，保证产品质量稳定性"
+  },
+  {
+    "id": "prod-005",
+    "category": "生产事件",
+    "subcategory": "化工反应",
+    "name": "分离纯化事件",
+    "eventId": "SAP_CHEM_SEPARATION",
+    "businessDomain": "化工生产",
+    "description": "产品分离纯化过程监控",
+    "triggerCondition": "纯度低于标准或回收率异常",
+    "dataStructure": {
+      "purity": "number",
+      "recoveryRate": "number",
+      "separationMethod": "string",
+      "productId": "string",
+      "qualityGrade": "string"
+    },
+    "priority": "中",
+    "usageScenario": "监控分离纯化工艺效果，确保产品纯度达标"
+  },
+  {
+    "id": "prod-006",
+    "category": "生产事件",
+    "subcategory": "化工反应",
+    "name": "催化剂更换事件",
+    "eventId": "SAP_CHEM_CATALYST_CHANGE",
+    "businessDomain": "化工生产",
+    "description": "催化剂失活检测和更换管理",
+    "triggerCondition": "催化剂活性低于阈值",
+    "dataStructure": {
+      "catalystType": "string",
+      "activityLevel": "number",
+      "usageTime": "number",
+      "replacementDate": "datetime",
+      "batchNumber": "string"
+    },
+    "priority": "中",
+    "usageScenario": "监控催化剂活性，及时安排更换以保证生产效率"
+  },
+  {
+    "id": "trans-001",
+    "category": "生产事件",
+    "subcategory": "管道运输",
+    "name": "管道启停事件",
+    "eventId": "SAP_PIPE_STARTUP_SHUTDOWN",
+    "businessDomain": "物流运输",
+    "description": "管道输送系统启停操作记录",
+    "triggerCondition": "管道启动或停止操作",
+    "dataStructure": {
+      "pipelineId": "string",
+      "operation": "string",
+      "operatorId": "string",
+      "timestamp": "datetime",
+      "reason": "string"
+    },
+    "priority": "高",
+    "usageScenario": "记录管道启停操作，便于追溯和分析"
+  },
+  {
+    "id": "trans-002",
+    "category": "生产事件",
+    "subcategory": "管道运输",
+    "name": "压力异常事件",
+    "eventId": "SAP_PIPE_PRESSURE_ABNORMAL",
+    "businessDomain": "物流运输",
+    "description": "管道压力监控异常报警",
+    "triggerCondition": "压力超出正常范围",
+    "dataStructure": {
+      "pipelineId": "string",
+      "pressure": "number",
+      "threshold": "number",
+      "location": "string",
+      "alarmLevel": "string"
+    },
+    "priority": "高",
+    "usageScenario": "实时监控管道压力，及时发现泄漏或堵塞风险"
+  },
+  {
+    "id": "trans-003",
+    "category": "生产事件",
+    "subcategory": "管道运输",
+    "name": "流速变化事件",
+    "eventId": "SAP_PIPE_FLOW_CHANGE",
+    "businessDomain": "物流运输",
+    "description": "管道流速变化监控",
+    "triggerCondition": "流速偏离正常值超过阈值",
+    "dataStructure": {
+      "pipelineId": "string",
+      "flowRate": "number",
+      "normalFlowRate": "number",
+      "deviation": "number",
+      "timestamp": "datetime"
+    },
+    "priority": "中",
+    "usageScenario": "监控管道流速变化，优化输送效率"
+  },
+  {
+    "id": "store-001",
+    "category": "库存事件",
+    "subcategory": "储罐管理",
+    "name": "液位变化事件",
+    "eventId": "SAP_TANK_LEVEL_CHANGE",
+    "businessDomain": "仓储管理",
+    "description": "储罐液位变化监控",
+    "triggerCondition": "液位变化率异常或接近上下限",
+    "dataStructure": {
+      "tankId": "string",
+      "currentLevel": "number",
+      "changeRate": "number",
+      "capacity": "number",
+      "productType": "string"
+    },
+    "priority": "高",
+    "usageScenario": "实时监控储罐液位，防止溢出或空罐"
+  },
+  {
+    "id": "store-002",
+    "category": "库存事件",
+    "subcategory": "储罐管理",
+    "name": "温度异常事件",
+    "eventId": "SAP_TANK_TEMP_ABNORMAL",
+    "businessDomain": "仓储管理",
+    "description": "储罐温度异常监控",
+    "triggerCondition": "温度超出安全范围",
+    "dataStructure": {
+      "tankId": "string",
+      "temperature": "number",
+      "safetyRange": "object",
+      "productType": "string",
+      "alarmLevel": "string"
+    },
+    "priority": "高",
+    "usageScenario": "监控储罐温度，防止产品变质或安全事故"
+  },
+  {
+    "id": "store-003",
+    "category": "库存事件",
+    "subcategory": "储罐管理",
+    "name": "阀门操作事件",
+    "eventId": "SAP_TANK_VALVE_OPERATION",
+    "businessDomain": "仓储管理",
+    "description": "储罐阀门开关操作记录",
+    "triggerCondition": "阀门状态变化",
+    "dataStructure": {
+      "tankId": "string",
+      "valveId": "string",
+      "operation": "string",
+      "operatorId": "string",
+      "timestamp": "datetime"
+    },
+    "priority": "中",
+    "usageScenario": "记录阀门操作，追溯库存变化原因"
+  },
+  {
+    "id": "safety-001",
+    "category": "安全事件",
+    "subcategory": "安全监控",
+    "name": "气体泄漏事件",
+    "eventId": "SAP_SAFETY_GAS_LEAK",
+    "businessDomain": "安全环保",
+    "description": "有毒有害气体泄漏检测",
+    "triggerCondition": "气体浓度超过安全阈值",
+    "dataStructure": {
+      "gasType": "string",
+      "concentration": "number",
+      "location": "string",
+      "detectionTime": "datetime",
+      "emergencyLevel": "string"
+    },
+    "priority": "紧急",
+    "usageScenario": "实时监控气体泄漏，立即启动应急预案"
+  },
+  {
+    "id": "safety-002",
+    "category": "安全事件",
+    "subcategory": "安全监控",
+    "name": "火灾报警事件",
+    "eventId": "SAP_SAFETY_FIRE_ALARM",
+    "businessDomain": "安全环保",
+    "description": "火灾自动报警系统触发",
+    "triggerCondition": "烟雾或温度传感器触发",
+    "dataStructure": {
+      "sensorId": "string",
+      "location": "string",
+      "alarmType": "string",
+      "detectionTime": "datetime",
+      "responseStatus": "string"
+    },
+    "priority": "紧急",
+    "usageScenario": "火灾早期预警，启动消防系统和应急疏散"
+  },
+  {
+    "id": "safety-003",
+    "category": "安全事件",
+    "subcategory": "安全监控",
+    "name": "设备异常事件",
+    "eventId": "SAP_SAFETY_EQUIPMENT_FAULT",
+    "businessDomain": "安全环保",
+    "description": "关键设备故障或异常",
+    "triggerCondition": "设备运行参数异常或故障报警",
+    "dataStructure": {
+      "equipmentId": "string",
+      "faultType": "string",
+      "severity": "string",
+      "timestamp": "datetime",
+      "maintenanceRequired": "boolean"
+    },
+    "priority": "高",
+    "usageScenario": "监控设备健康状态，及时发现和处理故障"
+  },
+  {
+    "id": "proc-001",
+    "category": "采购事件",
+    "subcategory": "原料采购",
+    "name": "原油采购事件",
+    "eventId": "SAP_PROC_CRUDE_OIL",
+    "businessDomain": "采购管理",
+    "description": "原油采购合同和到货管理",
+    "triggerCondition": "采购订单创建或到货验收",
+    "dataStructure": {
+      "purchaseOrderId": "string",
+      "supplier": "string",
+      "quantity": "number",
+      "quality": "object",
+      "deliveryDate": "datetime"
+    },
+    "priority": "中",
+    "usageScenario": "管理原油采购流程，确保原料供应"
+  },
+  {
+    "id": "proc-002",
+    "category": "采购事件",
+    "subcategory": "原料采购",
+    "name": "化工原料采购事件",
+    "eventId": "SAP_PROC_CHEMICAL_RAW",
+    "businessDomain": "采购管理",
+    "description": "化工原料采购和质检",
+    "triggerCondition": "采购申请审批或质检完成",
+    "dataStructure": {
+      "materialId": "string",
+      "materialName": "string",
+      "quantity": "number",
+      "qualityReport": "object",
+      "storageLocation": "string"
+    },
+    "priority": "中",
+    "usageScenario": "化工原料采购全流程管理"
+  },
+  {
+    "id": "sales-001",
+    "category": "销售事件",
+    "subcategory": "产品销售",
+    "name": "成品油销售事件",
+    "eventId": "SAP_SALES_OIL_PRODUCT",
+    "businessDomain": "销售管理",
+    "description": "成品油销售订单和发货",
+    "triggerCondition": "销售订单创建或发货完成",
+    "dataStructure": {
+      "salesOrderId": "string",
+      "customer": "string",
+      "productType": "string",
+      "quantity": "number",
+      "deliveryDate": "datetime"
+    },
+    "priority": "中",
+    "usageScenario": "成品油销售流程管理和追踪"
+  },
+  {
+    "id": "sales-002",
+    "category": "销售事件",
+    "subcategory": "产品销售",
+    "name": "化工产品销售事件",
+    "eventId": "SAP_SALES_CHEMICAL_PRODUCT",
+    "businessDomain": "销售管理",
+    "description": "化工产品销售和物流",
+    "triggerCondition": "订单状态变更",
+    "dataStructure": {
+      "orderId": "string",
+      "productId": "string",
+      "customerName": "string",
+      "deliveryMethod": "string",
+      "paymentStatus": "string"
+    },
+    "priority": "中",
+    "usageScenario": "化工产品销售订单全生命周期管理"
+  }
+]

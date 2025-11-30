@@ -1,0 +1,314 @@
+import { useEffect, useState } from 'react'
+import {
+  Card,
+  Table,
+  Button,
+  Space,
+  Tag,
+  Input,
+  Select,
+  Modal,
+  Form,
+  Descriptions,
+  message,
+  Tabs,
+} from 'antd'
+import {
+  PlusOutlined,
+  SearchOutlined,
+  EyeOutlined,
+  FileTextOutlined,
+} from '@ant-design/icons'
+import type { EventTemplate } from '../types'
+
+const { Search } = Input
+const { Option } = Select
+
+export default function SubjectsPage() {
+  const [templates, setTemplates] = useState<EventTemplate[]>([])
+  const [filteredTemplates, setFilteredTemplates] = useState<EventTemplate[]>([])
+  const [loading, setLoading] = useState(true)
+  const [selectedCategory, setSelectedCategory] = useState<string>('全部')
+  const [searchText, setSearchText] = useState('')
+  const [detailModalVisible, setDetailModalVisible] = useState(false)
+  const [selectedTemplate, setSelectedTemplate] = useState<EventTemplate | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/data/event-templates.json')
+        const data = await response.json()
+        setTemplates(data)
+        setFilteredTemplates(data)
+      } catch (error) {
+        console.error('加载数据失败:', error)
+        message.error('加载事件模板失败')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
+
+  useEffect(() => {
+    let filtered = templates
+    if (selectedCategory !== '全部') {
+      filtered = filtered.filter((t) => t.category === selectedCategory)
+    }
+    if (searchText) {
+      filtered = filtered.filter(
+        (t) =>
+          t.name.toLowerCase().includes(searchText.toLowerCase()) ||
+          t.eventId.toLowerCase().includes(searchText.toLowerCase()) ||
+          t.description.toLowerCase().includes(searchText.toLowerCase())
+      )
+    }
+    setFilteredTemplates(filtered)
+  }, [selectedCategory, searchText, templates])
+
+  const categories = ['全部', ...new Set(templates.map((t) => t.category))]
+
+  const priorityColorMap: Record<string, string> = {
+    紧急: 'red',
+    高: 'orange',
+    中: 'blue',
+    低: 'default',
+  }
+
+  const columns = [
+    {
+      title: '事件ID',
+      dataIndex: 'eventId',
+      key: 'eventId',
+      width: 220,
+      fixed: 'left' as const,
+    },
+    {
+      title: '事件名称',
+      dataIndex: 'name',
+      key: 'name',
+      width: 150,
+    },
+    {
+      title: '业务分类',
+      dataIndex: 'category',
+      key: 'category',
+      width: 120,
+      render: (category: string) => {
+        const colorMap: Record<string, string> = {
+          生产事件: 'blue',
+          安全事件: 'red',
+          库存事件: 'orange',
+          采购事件: 'green',
+          销售事件: 'purple',
+        }
+        return <Tag color={colorMap[category] || 'default'}>{category}</Tag>
+      },
+    },
+    {
+      title: '子分类',
+      dataIndex: 'subcategory',
+      key: 'subcategory',
+      width: 120,
+    },
+    {
+      title: '业务域',
+      dataIndex: 'businessDomain',
+      key: 'businessDomain',
+      width: 120,
+    },
+    {
+      title: '优先级',
+      dataIndex: 'priority',
+      key: 'priority',
+      width: 100,
+      render: (priority: string) => (
+        <Tag color={priorityColorMap[priority] || 'default'}>{priority}</Tag>
+      ),
+    },
+    {
+      title: '描述',
+      dataIndex: 'description',
+      key: 'description',
+      width: 250,
+      ellipsis: true,
+    },
+    {
+      title: '操作',
+      key: 'action',
+      fixed: 'right' as const,
+      width: 150,
+      render: (_: unknown, record: EventTemplate) => (
+        <Space>
+          <Button
+            type="link"
+            size="small"
+            icon={<EyeOutlined />}
+            onClick={() => {
+              setSelectedTemplate(record)
+              setDetailModalVisible(true)
+            }}
+          >
+            查看详情
+          </Button>
+        </Space>
+      ),
+    },
+  ]
+
+  const subcategoryData = templates.reduce((acc, template) => {
+    if (!acc[template.category]) {
+      acc[template.category] = []
+    }
+    if (!acc[template.category].includes(template.subcategory)) {
+      acc[template.category].push(template.subcategory)
+    }
+    return acc
+  }, {} as Record<string, string[]>)
+
+  const tabItems = categories.map((category) => ({
+    key: category,
+    label: `${category} ${category !== '全部' ? `(${templates.filter((t) => t.category === category).length})` : `(${templates.length})`}`,
+    children: (
+      <div>
+        {category !== '全部' && subcategoryData[category] && (
+          <div style={{ marginBottom: 16 }}>
+            <Space wrap>
+              {subcategoryData[category].map((sub) => (
+                <Tag key={sub} color="blue">
+                  {sub}: {templates.filter((t) => t.subcategory === sub).length}个模板
+                </Tag>
+              ))}
+            </Space>
+          </div>
+        )}
+      </div>
+    ),
+  }))
+
+  return (
+    <Space direction="vertical" size="large" style={{ width: '100%' }}>
+      <Card>
+        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+          <div style={{ fontSize: 16, fontWeight: 500 }}>
+            <FileTextOutlined style={{ marginRight: 8 }} />
+            SAP ERP 石油化工业务事件模板库
+          </div>
+          <div style={{ color: '#666', fontSize: 14 }}>
+            本模板库包含SAP ERP系统中常见的石油化工行业业务事件，涵盖生产、采购、销售、库存和安全等多个业务领域。
+            选择合适的模板可以快速创建业务事件配置。
+          </div>
+        </Space>
+      </Card>
+
+      <Card>
+        <Space style={{ marginBottom: 16, width: '100%', justifyContent: 'space-between' }}>
+          <Space>
+            <Search
+              placeholder="搜索事件名称、ID或描述"
+              allowClear
+              style={{ width: 300 }}
+              onSearch={setSearchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              prefix={<SearchOutlined />}
+            />
+            <Select
+              value={selectedCategory}
+              onChange={setSelectedCategory}
+              style={{ width: 150 }}
+            >
+              {categories.map((cat) => (
+                <Option key={cat} value={cat}>
+                  {cat}
+                </Option>
+              ))}
+            </Select>
+          </Space>
+          <Button type="primary" icon={<PlusOutlined />}>
+            基于模板创建事件
+          </Button>
+        </Space>
+
+        <Tabs
+          activeKey={selectedCategory}
+          onChange={setSelectedCategory}
+          items={tabItems}
+        />
+
+        <Table
+          columns={columns}
+          dataSource={filteredTemplates}
+          rowKey="id"
+          loading={loading}
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: true,
+            showTotal: (total) => `共 ${total} 个模板`,
+          }}
+          scroll={{ x: 1400 }}
+        />
+      </Card>
+
+      <Modal
+        title="事件模板详情"
+        open={detailModalVisible}
+        onCancel={() => setDetailModalVisible(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setDetailModalVisible(false)}>
+            关闭
+          </Button>,
+          <Button
+            key="use"
+            type="primary"
+            onClick={() => {
+              message.success('已基于模板创建事件配置')
+              setDetailModalVisible(false)
+            }}
+          >
+            使用此模板
+          </Button>,
+        ]}
+        width={800}
+      >
+        {selectedTemplate && (
+          <Descriptions bordered column={2}>
+            <Descriptions.Item label="事件ID" span={2}>
+              <code>{selectedTemplate.eventId}</code>
+            </Descriptions.Item>
+            <Descriptions.Item label="事件名称">
+              {selectedTemplate.name}
+            </Descriptions.Item>
+            <Descriptions.Item label="优先级">
+              <Tag color={priorityColorMap[selectedTemplate.priority]}>
+                {selectedTemplate.priority}
+              </Tag>
+            </Descriptions.Item>
+            <Descriptions.Item label="业务分类">
+              {selectedTemplate.category}
+            </Descriptions.Item>
+            <Descriptions.Item label="子分类">
+              {selectedTemplate.subcategory}
+            </Descriptions.Item>
+            <Descriptions.Item label="业务域" span={2}>
+              {selectedTemplate.businessDomain}
+            </Descriptions.Item>
+            <Descriptions.Item label="描述" span={2}>
+              {selectedTemplate.description}
+            </Descriptions.Item>
+            <Descriptions.Item label="触发条件" span={2}>
+              {selectedTemplate.triggerCondition}
+            </Descriptions.Item>
+            <Descriptions.Item label="使用场景" span={2}>
+              {selectedTemplate.usageScenario}
+            </Descriptions.Item>
+            <Descriptions.Item label="数据结构" span={2}>
+              <pre style={{ margin: 0, background: '#f5f5f5', padding: 12, borderRadius: 4 }}>
+                {JSON.stringify(selectedTemplate.dataStructure, null, 2)}
+              </pre>
+            </Descriptions.Item>
+          </Descriptions>
+        )}
+      </Modal>
+    </Space>
+  )
+}

@@ -1,0 +1,122 @@
+[
+  {
+    "id": "evt-001",
+    "eventId": "SAP_REFINE_ATMOS_DIST",
+    "name": "常压蒸馏事件",
+    "category": "生产事件",
+    "description": "监控常压蒸馏装置的运行状态和产品质量",
+    "status": "已发布",
+    "publishDate": "2025-11-15T08:30:00",
+    "publisher": "张伟",
+    "subscribers": 12,
+    "lastTrigger": "2025-11-30T14:20:00"
+  },
+  {
+    "id": "evt-002",
+    "eventId": "SAP_SAFETY_GAS_LEAK",
+    "name": "气体泄漏事件",
+    "category": "安全事件",
+    "description": "有毒有害气体泄漏检测",
+    "status": "已发布",
+    "publishDate": "2025-11-10T09:00:00",
+    "publisher": "李娜",
+    "subscribers": 25,
+    "lastTrigger": "2025-11-29T16:45:00"
+  },
+  {
+    "id": "evt-003",
+    "eventId": "SAP_TANK_LEVEL_CHANGE",
+    "name": "液位变化事件",
+    "category": "库存事件",
+    "description": "储罐液位变化监控",
+    "status": "已发布",
+    "publishDate": "2025-11-20T10:15:00",
+    "publisher": "王强",
+    "subscribers": 8,
+    "lastTrigger": "2025-11-30T18:30:00"
+  },
+  {
+    "id": "evt-004",
+    "eventId": "SAP_REFINE_CAT_CRACK",
+    "name": "催化裂化事件",
+    "category": "生产事件",
+    "description": "催化裂化装置运行状态监控",
+    "status": "已发布",
+    "publishDate": "2025-11-18T11:00:00",
+    "publisher": "张伟",
+    "subscribers": 10,
+    "lastTrigger": "2025-11-30T12:15:00"
+  },
+  {
+    "id": "evt-005",
+    "eventId": "SAP_PIPE_PRESSURE_ABNORMAL",
+    "name": "压力异常事件",
+    "category": "生产事件",
+    "description": "管道压力监控异常报警",
+    "status": "已发布",
+    "publishDate": "2025-11-25T13:30:00",
+    "publisher": "赵敏",
+    "subscribers": 15,
+    "lastTrigger": "2025-11-30T20:00:00"
+  },
+  {
+    "id": "evt-006",
+    "eventId": "SAP_SALES_OIL_PRODUCT",
+    "name": "成品油销售事件",
+    "category": "销售事件",
+    "description": "成品油销售订单和发货",
+    "status": "已发布",
+    "publishDate": "2025-11-22T14:00:00",
+    "publisher": "刘洋",
+    "subscribers": 6,
+    "lastTrigger": "2025-11-30T17:00:00"
+  },
+  {
+    "id": "evt-007",
+    "eventId": "SAP_PROC_CRUDE_OIL",
+    "name": "原油采购事件",
+    "category": "采购事件",
+    "description": "原油采购合同和到货管理",
+    "status": "已发布",
+    "publishDate": "2025-11-12T15:00:00",
+    "publisher": "陈静",
+    "subscribers": 5,
+    "lastTrigger": "2025-11-29T10:30:00"
+  },
+  {
+    "id": "evt-008",
+    "eventId": "SAP_CHEM_POLYMER",
+    "name": "聚合反应事件",
+    "category": "生产事件",
+    "description": "聚合反应过程监控",
+    "status": "草稿",
+    "publishDate": null,
+    "publisher": "王强",
+    "subscribers": 0,
+    "lastTrigger": null
+  },
+  {
+    "id": "evt-009",
+    "eventId": "SAP_SAFETY_FIRE_ALARM",
+    "name": "火灾报警事件",
+    "category": "安全事件",
+    "description": "火灾自动报警系统触发",
+    "status": "已发布",
+    "publishDate": "2025-11-08T16:00:00",
+    "publisher": "李娜",
+    "subscribers": 30,
+    "lastTrigger": "2025-11-28T08:15:00"
+  },
+  {
+    "id": "evt-010",
+    "eventId": "SAP_TANK_TEMP_ABNORMAL",
+    "name": "温度异常事件",
+    "category": "库存事件",
+    "description": "储罐温度异常监控",
+    "status": "已停用",
+    "publishDate": "2025-10-20T09:00:00",
+    "publisher": "王强",
+    "subscribers": 3,
+    "lastTrigger": "2025-11-15T14:00:00"
+  }
+]

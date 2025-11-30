@@ -1,0 +1,150 @@
+[
+  {
+    "id": "log-001",
+    "eventId": "SAP_REFINE_ATMOS_DIST",
+    "eventName": "常压蒸馏事件",
+    "triggerTime": "2025-11-30T14:20:00",
+    "status": "成功",
+    "payload": {
+      "temperature": 365,
+      "pressure": 1.5,
+      "feedRate": 250,
+      "productYield": 85.5,
+      "operatorId": "OP-1001"
+    },
+    "subscribers": 12,
+    "successPush": 12,
+    "failedPush": 0,
+    "processingTime": "125ms"
+  },
+  {
+    "id": "log-002",
+    "eventId": "SAP_SAFETY_GAS_LEAK",
+    "eventName": "气体泄漏事件",
+    "triggerTime": "2025-11-29T16:45:00",
+    "status": "成功",
+    "payload": {
+      "gasType": "H2S",
+      "concentration": 25,
+      "location": "装置区A-3",
+      "detectionTime": "2025-11-29T16:45:00",
+      "emergencyLevel": "紧急"
+    },
+    "subscribers": 25,
+    "successPush": 25,
+    "failedPush": 0,
+    "processingTime": "89ms"
+  },
+  {
+    "id": "log-003",
+    "eventId": "SAP_TANK_LEVEL_CHANGE",
+    "eventName": "液位变化事件",
+    "triggerTime": "2025-11-30T18:30:00",
+    "status": "成功",
+    "payload": {
+      "tankId": "TANK-101",
+      "currentLevel": 92.5,
+      "changeRate": 2.3,
+      "capacity": 5000,
+      "productType": "汽油92#"
+    },
+    "subscribers": 8,
+    "successPush": 7,
+    "failedPush": 1,
+    "processingTime": "156ms"
+  },
+  {
+    "id": "log-004",
+    "eventId": "SAP_PIPE_PRESSURE_ABNORMAL",
+    "eventName": "压力异常事件",
+    "triggerTime": "2025-11-30T20:00:00",
+    "status": "成功",
+    "payload": {
+      "pipelineId": "PIPE-205",
+      "pressure": 8.5,
+      "threshold": 7.0,
+      "location": "管段C-12",
+      "alarmLevel": "高"
+    },
+    "subscribers": 15,
+    "successPush": 15,
+    "failedPush": 0,
+    "processingTime": "98ms"
+  },
+  {
+    "id": "log-005",
+    "eventId": "SAP_REFINE_CAT_CRACK",
+    "eventName": "催化裂化事件",
+    "triggerTime": "2025-11-30T12:15:00",
+    "status": "成功",
+    "payload": {
+      "reactionTemp": 520,
+      "catalystActivity": 0.85,
+      "feedStock": "重质柴油",
+      "gasolineYield": 45.2,
+      "timestamp": "2025-11-30T12:15:00"
+    },
+    "subscribers": 10,
+    "successPush": 10,
+    "failedPush": 0,
+    "processingTime": "112ms"
+  },
+  {
+    "id": "log-006",
+    "eventId": "SAP_SALES_OIL_PRODUCT",
+    "eventName": "成品油销售事件",
+    "triggerTime": "2025-11-30T17:00:00",
+    "status": "失败",
+    "payload": {
+      "salesOrderId": "SO-2025-11-30-001",
+      "customer": "华东石化",
+      "productType": "柴油0#",
+      "quantity": 15000,
+      "deliveryDate": "2025-12-05T10:00:00"
+    },
+    "subscribers": 6,
+    "successPush": 5,
+    "failedPush": 1,
+    "processingTime": "245ms",
+    "errorMessage": "订阅者ERP系统连接超时"
+  },
+  {
+    "id": "log-007",
+    "eventId": "SAP_SAFETY_FIRE_ALARM",
+    "eventName": "火灾报警事件",
+    "triggerTime": "2025-11-28T08:15:00",
+    "status": "成功",
+    "payload": {
+      "sensorId": "SENSOR-F-056",
+      "location": "仓库B-2",
+      "alarmType": "烟雾报警",
+      "detectionTime": "2025-11-28T08:15:00",
+      "responseStatus": "已处理"
+    },
+    "subscribers": 30,
+    "successPush": 30,
+    "failedPush": 0,
+    "processingTime": "76ms"
+  },
+  {
+    "id": "log-008",
+    "eventId": "SAP_PROC_CRUDE_OIL",
+    "eventName": "原油采购事件",
+    "triggerTime": "2025-11-29T10:30:00",
+    "status": "成功",
+    "payload": {
+      "purchaseOrderId": "PO-2025-11-285",
+      "supplier": "中东石油",
+      "quantity": 50000,
+      "quality": {
+        "density": 0.85,
+        "sulfurContent": 1.2
+      },
+      "deliveryDate": "2025-12-15T00:00:00"
+    },
+    "subscribers": 5,
+    "successPush": 4,
+    "failedPush": 1,
+    "processingTime": "189ms"
+  }
+]
