@@ -23,7 +23,6 @@ import type { EventTemplate } from '../types'
 import type { FunctionRequirement } from '../types/requirements'
 import RequirementTooltip from '../components/RequirementTooltip'
 import { getRequirementsByFunctionIds } from '../utils/requirementsHelper'
-import { useNavigate, useLocation } from 'react-router-dom'
 
 const { Search } = Input
 const { Option } = Select
@@ -36,9 +35,9 @@ export default function SubjectsPage() {
   const [searchText, setSearchText] = useState('')
   const [detailModalVisible, setDetailModalVisible] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<EventTemplate | null>(null)
+  const [createModalVisible, setCreateModalVisible] = useState(false)
+  const [form] = Form.useForm()
   const [requirements, setRequirements] = useState<FunctionRequirement[]>([])
-  const navigate = useNavigate()
-  const location = useLocation()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,13 +59,6 @@ export default function SubjectsPage() {
     }
     fetchData()
   }, [])
-
-  useEffect(() => {
-    const params = new URLSearchParams(location.search)
-    if (params.get('openRegister') === '1') {
-      navigate('/message/register')
-    }
-  }, [location.search, navigate])
 
   useEffect(() => {
     let filtered = templates
@@ -248,8 +240,12 @@ export default function SubjectsPage() {
               ))}
             </Select>
           </Space>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/message/register')}>
-            消息登记
+          <Button 
+            type="primary" 
+            icon={<PlusOutlined />}
+            onClick={() => setCreateModalVisible(true)}
+          >
+            登记业务事件
           </Button>
         </Space>
 
@@ -280,17 +276,6 @@ export default function SubjectsPage() {
         footer={[
           <Button key="cancel" onClick={() => setDetailModalVisible(false)}>
             关闭
-          </Button>,
-          <Button
-            key="create-from-template"
-            onClick={() => {
-              if (selectedTemplate) {
-                navigate(`/message/register?eventId=${encodeURIComponent(selectedTemplate.eventId)}&eventName=${encodeURIComponent(selectedTemplate.name)}&topic=${encodeURIComponent(selectedTemplate.name)}&templateId=${encodeURIComponent(selectedTemplate.id)}`)
-                setDetailModalVisible(false)
-              }
-            }}
-          >
-            模版创建事件
           </Button>,
           <Button
             key="use"
@@ -341,25 +326,180 @@ export default function SubjectsPage() {
                 {JSON.stringify(selectedTemplate.dataStructure, null, 2)}
               </pre>
             </Descriptions.Item>
-            <Descriptions.Item label="关联模板" span={2}>
-              <div>
-                {(() => {
-                  const custom = JSON.parse(localStorage.getItem('customTemplates') || '[]')
-                  const related = custom.filter((t: any) => t.topic === selectedTemplate.name)
-                  return related.length > 0 ? (
-                    <Space wrap>
-                      {related.map((t: any) => (
-                        <Tag key={t.id} color="blue">{t.eventId}</Tag>
-                      ))}
-                    </Space>
-                  ) : (
-                    <span style={{ color: '#999' }}>暂无关联模板</span>
-                  )
-                })()}
-              </div>
-            </Descriptions.Item>
           </Descriptions>
         )}
+      </Modal>
+
+      <Modal
+        title="登记业务事件"
+        open={createModalVisible}
+        onCancel={() => {
+          setCreateModalVisible(false)
+          form.resetFields()
+        }}
+        footer={[
+          <Button key="cancel" onClick={() => {
+            setCreateModalVisible(false)
+            form.resetFields()
+          }}>
+            取消
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            onClick={() => {
+              form.validateFields().then((values) => {
+                console.log('表单数据:', values)
+                message.success('业务事件登记成功')
+                setCreateModalVisible(false)
+                form.resetFields()
+              }).catch((error) => {
+                console.error('表单验证失败:', error)
+              })
+            }}
+          >
+            提交
+          </Button>,
+        ]}
+        width={800}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          initialValues={{
+            priority: '中',
+            category: '生产事件'
+          }}
+        >
+          <Form.Item
+            label="事件ID"
+            name="eventId"
+            rules={[
+              { required: true, message: '请输入事件ID' },
+              { pattern: /^[A-Z][A-Z0-9_]+$/, message: '事件ID必须以大写字母开头，只能包含大写字母、数字和下划线' }
+            ]}
+          >
+            <Input placeholder="例如: SAP_REFINE_NEW_EVENT" />
+          </Form.Item>
+
+          <Form.Item
+            label="事件名称"
+            name="name"
+            rules={[
+              { required: true, message: '请输入事件名称' },
+              { min: 2, max: 50, message: '事件名称长度必须在2-50个字符之间' }
+            ]}
+          >
+            <Input placeholder="请输入业务事件名称" />
+          </Form.Item>
+
+          <Form.Item
+            label="业务分类"
+            name="category"
+            rules={[{ required: true, message: '请选择业务分类' }]}
+          >
+            <Select placeholder="请选择业务分类">
+              {categories.filter(cat => cat !== '全部').map((cat) => (
+                <Option key={cat} value={cat}>{cat}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            label="子分类"
+            name="subcategory"
+            rules={[{ required: true, message: '请输入子分类' }]}
+          >
+            <Input placeholder="例如: 常压蒸馏、催化裂化等" />
+          </Form.Item>
+
+          <Form.Item
+            label="业务域"
+            name="businessDomain"
+            rules={[{ required: true, message: '请输入业务域' }]}
+          >
+            <Input placeholder="例如: SAP ERP石油化工、精馏工艺等" />
+          </Form.Item>
+
+          <Form.Item
+            label="优先级"
+            name="priority"
+            rules={[{ required: true, message: '请选择优先级' }]}
+          >
+            <Select>
+              <Option value="紧急">紧急</Option>
+              <Option value="高">高</Option>
+              <Option value="中">中</Option>
+              <Option value="低">低</Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            label="描述"
+            name="description"
+            rules={[
+              { required: true, message: '请输入事件描述' },
+              { min: 10, max: 200, message: '描述长度必须在10-200个字符之间' }
+            ]}
+          >
+            <Input.TextArea 
+              placeholder="请详细描述该业务事件的用途和影响范围" 
+              rows={3}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="触发条件"
+            name="triggerCondition"
+            rules={[
+              { required: true, message: '请输入触发条件' },
+              { min: 10, message: '触发条件描述至少需要10个字符' }
+            ]}
+          >
+            <Input.TextArea 
+              placeholder="详细描述触发该事件的具体条件，如数值阈值、状态变更等" 
+              rows={3}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="使用场景"
+            name="usageScenario"
+            rules={[
+              { required: true, message: '请输入使用场景' },
+              { min: 10, message: '使用场景描述至少需要10个字符' }
+            ]}
+          >
+            <Input.TextArea 
+              placeholder="描述该事件在业务流程中的应用场景和业务价值" 
+              rows={3}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="数据结构 (JSON)"
+            name="dataStructure"
+            rules={[
+              { required: true, message: '请输入数据结构' },
+              {
+                validator: (_, value) => {
+                  if (!value) return Promise.reject('请输入数据结构')
+                  try {
+                    JSON.parse(value)
+                    return Promise.resolve()
+                  } catch {
+                    return Promise.reject('请输入有效的JSON格式')
+                  }
+                }
+              }
+            ]}
+          >
+            <Input.TextArea 
+              placeholder="请输入JSON格式的数据结构定义" 
+              rows={6}
+            />
+          </Form.Item>
+        </Form>
       </Modal>
     </Space>
   )
