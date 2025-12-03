@@ -27,6 +27,7 @@ import {
 } from '@ant-design/icons'
 import type { Subscription } from '../types'
 import type { FunctionRequirement } from '../types/requirements'
+import type { PublishedEvent } from '../types'
 import RequirementTooltip from '../components/RequirementTooltip'
 import { getRequirementsByFunctionIds } from '../utils/requirementsHelper'
 
@@ -42,15 +43,27 @@ export default function SubscriptionsPage() {
   const [selectedStatus, setSelectedStatus] = useState<string>('全部')
   const [searchText, setSearchText] = useState('')
   const [requirements, setRequirements] = useState<FunctionRequirement[]>([])
+  const [publishedEvents, setPublishedEvents] = useState<PublishedEvent[]>([])
   const [form] = Form.useForm()
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/data/subscriptions.json')
-        const data = await response.json()
-        setSubscriptions(data)
-        setFilteredSubscriptions(data)
+        // 加载订阅数据
+        const [subscriptionRes, eventsRes] = await Promise.all([
+          fetch('/data/subscriptions.json'),
+          fetch('/data/published-events.json')
+        ])
+        
+        const subscriptionsData = await subscriptionRes.json()
+        const eventsData = await eventsRes.json()
+        
+        setSubscriptions(subscriptionsData)
+        setFilteredSubscriptions(subscriptionsData)
+        
+        // 筛选已发布的事件
+        const publishedEventsData = eventsData.filter((event: PublishedEvent) => event.status === '已发布')
+        setPublishedEvents(publishedEventsData)
 
         // 加载需求数据
         const reqs = await getRequirementsByFunctionIds(['F021', 'F022', 'F023', 'F024', 'F025'])
@@ -84,7 +97,18 @@ export default function SubscriptionsPage() {
   const handleAdd = () => {
     setEditingSubscription(null)
     form.resetFields()
+    // 设置默认状态为启动
+    form.setFieldsValue({ status: '启动' })
     setModalVisible(true)
+  }
+
+  const handleEventIdChange = (eventId: string) => {
+    const selectedEvent = publishedEvents.find(event => event.eventId === eventId)
+    if (selectedEvent) {
+      form.setFieldsValue({
+        eventName: selectedEvent.name
+      })
+    }
   }
 
   const handleEdit = (record: Subscription) => {
@@ -126,14 +150,12 @@ export default function SubscriptionsPage() {
   }
 
   const statusColorMap: Record<string, string> = {
-    正常: 'success',
+    启动: 'success',
     暂停: 'warning',
-    异常: 'error',
   }
 
-  const normalCount = subscriptions.filter((s) => s.status === '正常').length
+  const activeCount = subscriptions.filter((s) => s.status === '启动').length
   const pausedCount = subscriptions.filter((s) => s.status === '暂停').length
-  const errorCount = subscriptions.filter((s) => s.status === '异常').length
   const totalSuccess = subscriptions.reduce((sum, s) => sum + s.successCount, 0)
   const totalFailure = subscriptions.reduce((sum, s) => sum + s.failureCount, 0)
 
@@ -165,11 +187,11 @@ export default function SubscriptionsPage() {
       render: (status: string) => (
         <Badge
           status={
-            status === '正常'
+            status === '启动'
               ? 'success'
               : status === '暂停'
               ? 'warning'
-              : 'error'
+              : 'default'
           }
           text={status}
         />
@@ -267,17 +289,17 @@ export default function SubscriptionsPage() {
         </Space>
       </Card>
       <Row gutter={16}>
-        <Col span={6}>
+        <Col span={8}>
           <Card>
             <Statistic
-              title="正常订阅"
-              value={normalCount}
+              title="启动订阅"
+              value={activeCount}
               valueStyle={{ color: '#52c41a' }}
               prefix={<CheckCircleOutlined />}
             />
           </Card>
         </Col>
-        <Col span={6}>
+        <Col span={8}>
           <Card>
             <Statistic
               title="暂停订阅"
@@ -287,22 +309,12 @@ export default function SubscriptionsPage() {
             />
           </Card>
         </Col>
-        <Col span={6}>
+        <Col span={8}>
           <Card>
             <Statistic
               title="总成功推送"
               value={totalSuccess}
               valueStyle={{ color: '#1890ff' }}
-            />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            <Statistic
-              title="总失败推送"
-              value={totalFailure}
-              valueStyle={{ color: totalFailure > 0 ? '#ff4d4f' : '#666' }}
-              prefix={totalFailure > 0 ? <CloseCircleOutlined /> : undefined}
             />
           </Card>
         </Col>
@@ -325,9 +337,8 @@ export default function SubscriptionsPage() {
               style={{ width: 150 }}
             >
               <Option value="全部">全部状态</Option>
-              <Option value="正常">正常</Option>
+              <Option value="启动">启动</Option>
               <Option value="暂停">暂停</Option>
-              <Option value="异常">异常</Option>
             </Select>
           </Space>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
@@ -369,9 +380,20 @@ export default function SubscriptionsPage() {
           <Form.Item
             name="eventId"
             label="事件ID"
-            rules={[{ required: true, message: '请输入事件ID' }]}
+            rules={[{ required: true, message: '请选择事件ID' }]}
           >
-            <Input placeholder="例如: SAP_REFINE_ATMOS_DIST" />
+            <Select
+              placeholder="请选择已发布的事件"
+              showSearch
+              optionFilterProp="children"
+              onChange={handleEventIdChange}
+            >
+              {publishedEvents.map((event) => (
+                <Option key={event.eventId} value={event.eventId}>
+                  {event.eventId} - {event.name}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
           <Form.Item
             name="eventName"
@@ -387,9 +409,6 @@ export default function SubscriptionsPage() {
           >
             <Select>
               <Option value="Webhook">Webhook</Option>
-              <Option value="HTTP API">HTTP API</Option>
-              <Option value="消息队列">消息队列</Option>
-              <Option value="邮件">邮件</Option>
             </Select>
           </Form.Item>
           <Form.Item
@@ -419,9 +438,8 @@ export default function SubscriptionsPage() {
             rules={[{ required: true, message: '请选择状态' }]}
           >
             <Select>
-              <Option value="正常">正常</Option>
+              <Option value="启动">启动</Option>
               <Option value="暂停">暂停</Option>
-              <Option value="异常">异常</Option>
             </Select>
           </Form.Item>
         </Form>

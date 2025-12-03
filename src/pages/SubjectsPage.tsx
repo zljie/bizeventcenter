@@ -12,12 +12,14 @@ import {
   Descriptions,
   message,
   Tabs,
+  Popconfirm,
 } from 'antd'
 import {
   PlusOutlined,
   SearchOutlined,
   EyeOutlined,
   FileTextOutlined,
+  DeleteOutlined,
 } from '@ant-design/icons'
 import type { EventTemplate } from '../types'
 import type { FunctionRequirement } from '../types/requirements'
@@ -38,6 +40,12 @@ export default function SubjectsPage() {
   const [createModalVisible, setCreateModalVisible] = useState(false)
   const [form] = Form.useForm()
   const [requirements, setRequirements] = useState<FunctionRequirement[]>([])
+  const [messageParameters, setMessageParameters] = useState<Array<{
+    id: string
+    name: string
+    type: string
+    required: string
+  }>>([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -336,11 +344,13 @@ export default function SubjectsPage() {
         onCancel={() => {
           setCreateModalVisible(false)
           form.resetFields()
+          setMessageParameters([])
         }}
         footer={[
           <Button key="cancel" onClick={() => {
             setCreateModalVisible(false)
             form.resetFields()
+            setMessageParameters([])
           }}>
             取消
           </Button>,
@@ -349,10 +359,16 @@ export default function SubjectsPage() {
             type="primary"
             onClick={() => {
               form.validateFields().then((values) => {
-                console.log('表单数据:', values)
+                // 确保消息参数数据是完整的
+                const formData = {
+                  ...values,
+                  messageParameters: messageParameters.filter(param => param.name.trim() !== '')
+                }
+                console.log('表单数据:', formData)
                 message.success('业务事件登记成功')
                 setCreateModalVisible(false)
                 form.resetFields()
+                setMessageParameters([])
               }).catch((error) => {
                 console.error('表单验证失败:', error)
               })
@@ -477,27 +493,166 @@ export default function SubjectsPage() {
           </Form.Item>
 
           <Form.Item
-            label="数据结构 (JSON)"
-            name="dataStructure"
+            label="消息参数"
+            name="messageParameters"
             rules={[
-              { required: true, message: '请输入数据结构' },
+              { required: true, message: '请配置消息参数' },
               {
                 validator: (_, value) => {
-                  if (!value) return Promise.reject('请输入数据结构')
-                  try {
-                    JSON.parse(value)
-                    return Promise.resolve()
-                  } catch {
-                    return Promise.reject('请输入有效的JSON格式')
+                  if (!value || value.length === 0) {
+                    return Promise.reject('请至少添加一个消息参数')
                   }
+                  
+                  // 验证每个参数
+                  for (let i = 0; i < value.length; i++) {
+                    const param = value[i]
+                    if (!param.name || param.name.trim() === '') {
+                      return Promise.reject(`第${i + 1}个参数名称不能为空`)
+                    }
+                    if (!param.type) {
+                      return Promise.reject(`第${i + 1}个参数类型不能为空`)
+                    }
+                    if (!param.required) {
+                      return Promise.reject(`第${i + 1}个参数必填字段不能为空`)
+                    }
+                  }
+                  
+                  return Promise.resolve()
                 }
               }
             ]}
           >
-            <Input.TextArea 
-              placeholder="请输入JSON格式的数据结构定义" 
-              rows={6}
-            />
+            <div style={{ border: '1px solid #d9d9d9', borderRadius: 6, padding: 16 }}>
+              {/* 表头 */}
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: '2fr 1fr 1fr 80px', 
+                gap: '16px',
+                padding: '8px 0',
+                borderBottom: '1px solid #f0f0f0',
+                fontWeight: 500,
+                color: '#666',
+                marginBottom: '8px'
+              }}>
+                <div>参数名</div>
+                <div>类型</div>
+                <div>必填</div>
+                <div>操作</div>
+              </div>
+              
+              {/* 参数列表 */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {messageParameters.map((param, index) => (
+                  <div 
+                    key={param.id}
+                    style={{ 
+                      display: 'grid', 
+                      gridTemplateColumns: '2fr 1fr 1fr 80px', 
+                      gap: '16px',
+                      alignItems: 'center',
+                      padding: '4px 0'
+                    }}
+                  >
+                    {/* 参数名输入框 */}
+                    <Input
+                      placeholder="如 vessel"
+                      value={param.name}
+                      onChange={(e) => {
+                        const newParams = [...messageParameters]
+                        newParams[index].name = e.target.value
+                        setMessageParameters(newParams)
+                        form.setFieldsValue({ messageParameters: newParams })
+                      }}
+                    />
+                    
+                    {/* 类型下拉选择 */}
+                    <Select
+                      value={param.type}
+                      onChange={(value) => {
+                        const newParams = [...messageParameters]
+                        newParams[index].type = value
+                        setMessageParameters(newParams)
+                        form.setFieldsValue({ messageParameters: newParams })
+                      }}
+                    >
+                      <Option value="string">string</Option>
+                      <Option value="integer">integer</Option>
+                      <Option value="number">number</Option>
+                      <Option value="boolean">boolean</Option>
+                      <Option value="array">array</Option>
+                      <Option value="object">object</Option>
+                    </Select>
+                    
+                    {/* 必填下拉选择 */}
+                    <Select
+                      value={param.required}
+                      onChange={(value) => {
+                        const newParams = [...messageParameters]
+                        newParams[index].required = value
+                        setMessageParameters(newParams)
+                        form.setFieldsValue({ messageParameters: newParams })
+                      }}
+                    >
+                      <Option value="是">是</Option>
+                      <Option value="否">否</Option>
+                    </Select>
+                    
+                    {/* 删除按钮 */}
+                    <Popconfirm
+                      title="确定要删除这个参数吗？"
+                      onConfirm={() => {
+                        const newParams = messageParameters.filter((_, i) => i !== index)
+                        setMessageParameters(newParams)
+                        form.setFieldsValue({ messageParameters: newParams })
+                      }}
+                      okText="确定"
+                      cancelText="取消"
+                    >
+                      <Button 
+                        type="text" 
+                        danger 
+                        size="small" 
+                        icon={<DeleteOutlined />}
+                        style={{ width: 32, height: 32 }}
+                      />
+                    </Popconfirm>
+                  </div>
+                ))}
+                
+                {/* 空状态提示 */}
+                {messageParameters.length === 0 && (
+                  <div style={{ 
+                    textAlign: 'center', 
+                    color: '#999', 
+                    padding: '20px 0',
+                    fontSize: '14px'
+                  }}>
+                    暂无消息参数，请点击"添加参数"按钮进行配置
+                  </div>
+                )}
+              </div>
+              
+              {/* 添加参数按钮 */}
+              <div style={{ marginTop: '16px', textAlign: 'right' }}>
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  onClick={() => {
+                    const newParam = {
+                      id: Date.now().toString(),
+                      name: '',
+                      type: 'string',
+                      required: '是'
+                    }
+                    const newParams = [...messageParameters, newParam]
+                    setMessageParameters(newParams)
+                    form.setFieldsValue({ messageParameters: newParams })
+                  }}
+                >
+                  添加参数
+                </Button>
+              </div>
+            </div>
           </Form.Item>
         </Form>
       </Modal>

@@ -10,7 +10,16 @@ export interface EventTemplate {
   dataStructure: Record<string, string>;
   priority: string;
   usageScenario: string;
+  messageParameters?: Array<{
+    id: string;
+    name: string;
+    type: string;
+    required: string;
+  }>;
 }
+
+// 主题类型定义（与EventTemplate相同，为语义清晰）
+export type Subject = EventTemplate;
 
 export interface PublishedEvent {
   id: string;
@@ -23,6 +32,9 @@ export interface PublishedEvent {
   publisher: string;
   subscribers: number;
   lastTrigger: string | null;
+  // 主题关联字段
+  subjectId?: string;      // 关联的主题ID
+  subjectName?: string;    // 主题名称（冗余字段，提高显示性能）
 }
 
 export interface Subscription {
@@ -31,7 +43,7 @@ export interface Subscription {
   eventName: string;
   subscriber: string;
   subscribeDate: string;
-  status: '正常' | '暂停' | '异常';
+  status: '启动' | '暂停';
   pushMethod: string;
   endpoint: string;
   filterCondition: string;

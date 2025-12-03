@@ -22,8 +22,10 @@ import {
 } from '@ant-design/icons'
 import type { PublishedEvent } from '../types'
 import type { FunctionRequirement } from '../types/requirements'
+import type { SubjectOption } from '../types/subject-binding'
 import RequirementTooltip from '../components/RequirementTooltip'
 import { getRequirementsByFunctionIds } from '../utils/requirementsHelper'
+import { subjectApiMethods } from '../utils/subjectApi'
 
 const { Search } = Input
 const { Option } = Select
@@ -38,6 +40,8 @@ export default function EventsPage() {
   const [searchText, setSearchText] = useState('')
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
   const [requirements, setRequirements] = useState<FunctionRequirement[]>([])
+  const [subjectOptions, setSubjectOptions] = useState<SubjectOption[]>([])
+  const [loadingSubjects, setLoadingSubjects] = useState(false)
   const [form] = Form.useForm()
 
   useEffect(() => {
@@ -51,6 +55,9 @@ export default function EventsPage() {
         // 加载需求数据
         const reqs = await getRequirementsByFunctionIds(['F011', 'F012', 'F013', 'F014', 'F015'])
         setRequirements(reqs)
+
+        // 加载主题选择选项
+        await loadSubjectOptions()
       } catch (error) {
         console.error('加载数据失败:', error)
         message.error('加载事件数据失败')
@@ -77,15 +84,51 @@ export default function EventsPage() {
     setFilteredEvents(filtered)
   }, [selectedStatus, searchText, events])
 
+  // 加载主题选择选项
+  const loadSubjectOptions = async () => {
+    try {
+      setLoadingSubjects(true)
+      const options = await subjectApiMethods.getSubjectOptions()
+      setSubjectOptions(options)
+    } catch (error) {
+      console.error('加载主题列表失败:', error)
+      message.error('加载主题列表失败')
+    } finally {
+      setLoadingSubjects(false)
+    }
+  }
+
+  // 处理主题选择
+  const handleSubjectChange = (subjectId: string | undefined) => {
+    const selectedOption = subjectOptions.find(option => option.value === subjectId)
+    form.setFieldsValue({
+      subjectId,
+      subjectName: selectedOption?.subject.name
+    })
+  }
+
+  // 处理表单重置
+  const resetForm = () => {
+    form.resetFields()
+    form.setFieldsValue({
+      status: '草稿',
+      category: '生产事件'
+    })
+  }
+
   const handleAdd = () => {
     setEditingEvent(null)
-    form.resetFields()
+    resetForm()
     setModalVisible(true)
   }
 
   const handleEdit = (record: PublishedEvent) => {
     setEditingEvent(record)
-    form.setFieldsValue(record)
+    form.setFieldsValue({
+      ...record,
+      subjectId: record.subjectId || undefined,
+      subjectName: record.subjectName || undefined
+    })
     setModalVisible(true)
   }
 
@@ -152,17 +195,27 @@ export default function EventsPage() {
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields()
+      
+      // 处理主题关联信息
+      const selectedOption = subjectOptions.find(option => option.value === values.subjectId)
+      const eventData = {
+        ...values,
+        subjectId: values.subjectId || undefined,
+        subjectName: selectedOption?.subject.name || values.subjectName || undefined,
+      }
+      
       if (editingEvent) {
         setEvents(
-          events.map((e) => (e.id === editingEvent.id ? { ...e, ...values } : e))
+          events.map((e) => (e.id === editingEvent.id ? { ...e, ...eventData } : e))
         )
         message.success('更新成功')
       } else {
         const newEvent: PublishedEvent = {
           id: `evt-${Date.now()}`,
-          ...values,
+          ...eventData,
           subscribers: 0,
           lastTrigger: null,
+          publishDate: null,
         }
         setEvents([newEvent, ...events])
         message.success('创建成功')
@@ -207,6 +260,27 @@ export default function EventsPage() {
           销售事件: 'purple',
         }
         return <Tag color={colorMap[category] || 'default'}>{category}</Tag>
+      },
+    },
+    {
+      title: '关联主题',
+      dataIndex: 'subjectName',
+      key: 'subjectName',
+      width: 200,
+      render: (subjectName: string | undefined, record: PublishedEvent) => {
+        if (subjectName) {
+          return (
+            <Space direction="vertical" size={0}>
+              <Tag color="green">{subjectName}</Tag>
+              {record.subjectId && (
+                <span style={{ fontSize: '12px', color: '#666' }}>
+                  ID: {record.subjectId}
+                </span>
+              )}
+            </Space>
+          )
+        }
+        return <span style={{ color: '#999' }}>未绑定</span>
       },
     },
     {
@@ -357,7 +431,7 @@ export default function EventsPage() {
             showSizeChanger: true,
             showTotal: (total) => `共 ${total} 条记录`,
           }}
-          scroll={{ x: 1400 }}
+          scroll={{ x: 1600 }}
           style={{ marginTop: 16 }}
         />
       </Card>
@@ -367,11 +441,18 @@ export default function EventsPage() {
         open={modalVisible}
         onOk={handleSubmit}
         onCancel={() => setModalVisible(false)}
-        width={600}
+        width={700}
         okText="保存"
         cancelText="取消"
       >
-        <Form form={form} layout="vertical">
+        <Form 
+          form={form} 
+          layout="vertical"
+          initialValues={{
+            status: '草稿',
+            category: '生产事件'
+          }}
+        >
           <Form.Item
             name="eventId"
             label="事件ID"
@@ -400,6 +481,32 @@ export default function EventsPage() {
             </Select>
           </Form.Item>
           <Form.Item
+            name="subjectId"
+            label="关联主题"
+            tooltip="选择与该事件关联的消息主题，实现事件与主题的解耦与版本管理"
+          >
+            <Select
+              placeholder="选择关联的消息主题（可选）"
+              allowClear
+              loading={loadingSubjects}
+              onChange={handleSubjectChange}
+              showSearch
+              optionFilterProp="label"
+              style={{ width: '100%' }}
+            >
+              {subjectOptions.map((option) => (
+                <Option key={option.value} value={option.value} label={option.label}>
+                  <div>
+                    <div style={{ fontWeight: 500 }}>{option.subject.name}</div>
+                    <div style={{ fontSize: '12px', color: '#666' }}>
+                      {option.subject.eventId} • {option.subject.category} • {option.subject.businessDomain}
+                    </div>
+                  </div>
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
             name="description"
             label="描述"
             rules={[{ required: true, message: '请输入描述' }]}
@@ -423,6 +530,11 @@ export default function EventsPage() {
             rules={[{ required: true, message: '请输入发布者' }]}
           >
             <Input placeholder="发布者姓名" />
+          </Form.Item>
+          
+          {/* 隐藏字段存储主题名称 */}
+          <Form.Item name="subjectName" style={{ display: 'none' }}>
+            <Input />
           </Form.Item>
         </Form>
       </Modal>

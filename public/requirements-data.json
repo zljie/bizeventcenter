@@ -145,7 +145,7 @@
         {
           "functionId": "F025",
           "functionName": "消息推送配置",
-          "description": "提供Webhook、消息队列、邮件等推送方式配置",
+          "description": "提供Webhook等推送方式配置",
           "acceptanceCriteria": "支持多种推送方式，配置界面直观易用",
           "notes": "统一的推送配置管理，支持协议适配"
         }

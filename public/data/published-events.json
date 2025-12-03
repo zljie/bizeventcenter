@@ -9,7 +9,9 @@
     "publishDate": "2025-11-15T08:30:00",
     "publisher": "张伟",
     "subscribers": 12,
-    "lastTrigger": "2025-11-30T14:20:00"
+    "lastTrigger": "2025-11-30T14:20:00",
+    "subjectId": "prod-001",
+    "subjectName": "常压蒸馏事件"
   },
   {
     "id": "evt-002",
@@ -21,7 +23,9 @@
     "publishDate": "2025-11-10T09:00:00",
     "publisher": "李娜",
     "subscribers": 25,
-    "lastTrigger": "2025-11-29T16:45:00"
+    "lastTrigger": "2025-11-29T16:45:00",
+    "subjectId": "safety-001",
+    "subjectName": "气体泄漏事件"
   },
   {
     "id": "evt-003",
@@ -33,7 +37,9 @@
     "publishDate": "2025-11-20T10:15:00",
     "publisher": "王强",
     "subscribers": 8,
-    "lastTrigger": "2025-11-30T18:30:00"
+    "lastTrigger": "2025-11-30T18:30:00",
+    "subjectId": "store-001",
+    "subjectName": "液位变化事件"
   },
   {
     "id": "evt-004",
@@ -45,7 +51,9 @@
     "publishDate": "2025-11-18T11:00:00",
     "publisher": "张伟",
     "subscribers": 10,
-    "lastTrigger": "2025-11-30T12:15:00"
+    "lastTrigger": "2025-11-30T12:15:00",
+    "subjectId": "prod-002",
+    "subjectName": "催化裂化事件"
   },
   {
     "id": "evt-005",
@@ -57,7 +65,9 @@
     "publishDate": "2025-11-25T13:30:00",
     "publisher": "赵敏",
     "subscribers": 15,
-    "lastTrigger": "2025-11-30T20:00:00"
+    "lastTrigger": "2025-11-30T20:00:00",
+    "subjectId": "trans-002",
+    "subjectName": "压力异常事件"
   },
   {
     "id": "evt-006",
@@ -69,7 +79,9 @@
     "publishDate": "2025-11-22T14:00:00",
     "publisher": "刘洋",
     "subscribers": 6,
-    "lastTrigger": "2025-11-30T17:00:00"
+    "lastTrigger": "2025-11-30T17:00:00",
+    "subjectId": "sales-001",
+    "subjectName": "成品油销售事件"
   },
   {
     "id": "evt-007",
@@ -81,7 +93,9 @@
     "publishDate": "2025-11-12T15:00:00",
     "publisher": "陈静",
     "subscribers": 5,
-    "lastTrigger": "2025-11-29T10:30:00"
+    "lastTrigger": "2025-11-29T10:30:00",
+    "subjectId": "proc-001",
+    "subjectName": "原油采购事件"
   },
   {
     "id": "evt-008",
@@ -93,7 +107,9 @@
     "publishDate": null,
     "publisher": "王强",
     "subscribers": 0,
-    "lastTrigger": null
+    "lastTrigger": null,
+    "subjectId": "prod-004",
+    "subjectName": "聚合反应事件"
   },
   {
     "id": "evt-009",
@@ -105,7 +121,9 @@
     "publishDate": "2025-11-08T16:00:00",
     "publisher": "李娜",
     "subscribers": 30,
-    "lastTrigger": "2025-11-28T08:15:00"
+    "lastTrigger": "2025-11-28T08:15:00",
+    "subjectId": "safety-002",
+    "subjectName": "火灾报警事件"
   },
   {
     "id": "evt-010",
@@ -117,6 +135,8 @@
     "publishDate": "2025-10-20T09:00:00",
     "publisher": "王强",
     "subscribers": 3,
-    "lastTrigger": "2025-11-15T14:00:00"
+    "lastTrigger": "2025-11-15T14:00:00",
+    "subjectId": "store-002",
+    "subjectName": "温度异常事件"
   }
 ]

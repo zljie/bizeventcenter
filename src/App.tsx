@@ -7,6 +7,7 @@ import SubscriptionsPage from './pages/SubscriptionsPage'
 import LogsPage from './pages/LogsPage'
 import SettingsPage from './pages/SettingsPage'
 import RequirementsOverview from './pages/RequirementsOverview'
+import MessageRegisterPage from './pages/MessageRegisterPage'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="logs" element={<LogsPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="requirements" element={<RequirementsOverview />} />
+        <Route path="message/register" element={<MessageRegisterPage />} />
       </Route>
     </Routes>
   )
