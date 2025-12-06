@@ -114,17 +114,17 @@ export default function SubjectsPage() {
       width: 120,
       render: (category: string) => {
         const colorMap: Record<string, string> = {
-          生产事件: 'blue',
-          安全事件: 'red',
-          库存事件: 'orange',
-          采购事件: 'green',
-          销售事件: 'purple',
+          生产管理事件: 'blue',
+          成本会计事件: 'red',
+          财务会计事件: 'orange',
+          采购管理事件: 'green',
+          销售分销事件: 'purple',
         }
         return <Tag color={colorMap[category] || 'default'}>{category}</Tag>
       },
     },
     {
-      title: '子分类',
+      title: '所属分组',
       dataIndex: 'subcategory',
       key: 'subcategory',
       width: 120,
@@ -293,7 +293,7 @@ export default function SubjectsPage() {
               setDetailModalVisible(false)
             }}
           >
-            使用此模板
+            确认
           </Button>,
         ]}
         width={800}
@@ -314,7 +314,7 @@ export default function SubjectsPage() {
             <Descriptions.Item label="业务分类">
               {selectedTemplate.category}
             </Descriptions.Item>
-            <Descriptions.Item label="子分类">
+            <Descriptions.Item label="所属分组">
               {selectedTemplate.subcategory}
             </Descriptions.Item>
             <Descriptions.Item label="业务域" span={2}>
@@ -322,9 +322,6 @@ export default function SubjectsPage() {
             </Descriptions.Item>
             <Descriptions.Item label="描述" span={2}>
               {selectedTemplate.description}
-            </Descriptions.Item>
-            <Descriptions.Item label="触发条件" span={2}>
-              {selectedTemplate.triggerCondition}
             </Descriptions.Item>
             <Descriptions.Item label="使用场景" span={2}>
               {selectedTemplate.usageScenario}
@@ -422,20 +419,17 @@ export default function SubjectsPage() {
           </Form.Item>
 
           <Form.Item
-            label="子分类"
+            label="所属分组"
             name="subcategory"
-            rules={[{ required: true, message: '请输入子分类' }]}
+            rules={[{ required: true, message: '请输入所属分组' }]}
           >
-            <Input placeholder="例如: 常压蒸馏、催化裂化等" />
+            <Select>
+              <Option value="Purchasing">采购管理 </Option>
+              <Option value="Inventory">库存管理</Option>
+            </Select>
           </Form.Item>
 
-          <Form.Item
-            label="业务域"
-            name="businessDomain"
-            rules={[{ required: true, message: '请输入业务域' }]}
-          >
-            <Input placeholder="例如: SAP ERP石油化工、精馏工艺等" />
-          </Form.Item>
+         
 
           <Form.Item
             label="优先级"
@@ -464,26 +458,14 @@ export default function SubjectsPage() {
             />
           </Form.Item>
 
-          <Form.Item
-            label="触发条件"
-            name="triggerCondition"
-            rules={[
-              { required: true, message: '请输入触发条件' },
-              { min: 10, message: '触发条件描述至少需要10个字符' }
-            ]}
-          >
-            <Input.TextArea 
-              placeholder="详细描述触发该事件的具体条件，如数值阈值、状态变更等" 
-              rows={3}
-            />
-          </Form.Item>
+          
 
           <Form.Item
             label="使用场景"
             name="usageScenario"
             rules={[
               { required: true, message: '请输入使用场景' },
-              { min: 10, message: '使用场景描述至少需要10个字符' }
+              { min: 10, message: '使用场景描述至少需要10个字符，描述该事件在业务流程中的应用场景和业务价值' }
             ]}
           >
             <Input.TextArea 

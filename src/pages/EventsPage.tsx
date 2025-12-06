@@ -253,17 +253,17 @@ export default function EventsPage() {
       width: 120,
       render: (category: string) => {
         const colorMap: Record<string, string> = {
-          生产事件: 'blue',
-          安全事件: 'red',
-          库存事件: 'orange',
-          采购事件: 'green',
-          销售事件: 'purple',
+          生产管理事件: 'blue',
+          成本会计事件: 'red',
+          财务会计事件: 'orange',
+          采购管理事件: 'green',
+          销售分销事件: 'purple',
         }
         return <Tag color={colorMap[category] || 'default'}>{category}</Tag>
       },
     },
     {
-      title: '关联主题',
+      title: '关联业务事件',
       dataIndex: 'subjectName',
       key: 'subjectName',
       width: 200,
@@ -473,16 +473,16 @@ export default function EventsPage() {
             rules={[{ required: true, message: '请选择分类' }]}
           >
             <Select>
-              <Option value="生产事件">生产事件</Option>
-              <Option value="安全事件">安全事件</Option>
-              <Option value="库存事件">库存事件</Option>
-              <Option value="采购事件">采购事件</Option>
-              <Option value="销售事件">销售事件</Option>
+              <Option value="生产管理事件">生产管理事件</Option>
+              <Option value="安全事件">成本会计事件</Option>
+              <Option value="库存事件">财务会计事件</Option>
+              <Option value="采购管理事件">采购管理事件</Option>
+              <Option value="销售分销事件">销售分销事件</Option>
             </Select>
           </Form.Item>
           <Form.Item
             name="subjectId"
-            label="关联主题"
+            label="关联业务事件"
             tooltip="选择与该事件关联的消息主题，实现事件与主题的解耦与版本管理"
           >
             <Select

@@ -430,7 +430,12 @@ export default function SubscriptionsPage() {
             label="重试策略"
             rules={[{ required: true, message: '请输入重试策略' }]}
           >
-            <Input placeholder="例如: 指数退避，最多重试3次" />
+            <Select>
+              <Option value="policy1">策略1- 重试3次，每次 间隔5秒</Option>
+              <Option value="policy2">策略2- 重试3次，每次间隔10分钟</Option>
+              <Option value="policy3">策略3- 重试3次，每次间隔1小时</Option>
+              <Option value="policy4">策略4- 不重试</Option>
+            </Select>
           </Form.Item>
           <Form.Item
             name="status"

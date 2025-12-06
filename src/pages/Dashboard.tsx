@@ -126,11 +126,11 @@ export default function Dashboard() {
       width: 120,
       render: (category: string) => {
         const colorMap: Record<string, string> = {
-          生产事件: 'blue',
-          安全事件: 'red',
-          库存事件: 'orange',
-          采购事件: 'green',
-          销售事件: 'purple',
+          生产管理事件: 'blue',
+          成本会计事件: 'red',
+          财务会计事件: 'orange',
+          采购管理事件: 'green',
+          销售分销事件: 'purple',
         }
         return <Tag color={colorMap[category] || 'default'}>{category}</Tag>
       },
