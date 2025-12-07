@@ -19,7 +19,7 @@ const menuItems = [
   {
     key: '/subjects',
     icon: <FileTextOutlined />,
-    label: <Link to="/subjects">业务事件登记</Link>,
+    label: <Link to="/subjects">消息主题登记</Link>,
   },
   {
     key: '/events',
@@ -40,7 +40,7 @@ const menuItems = [
 
 const breadcrumbNameMap: Record<string, string> = {
   '/dashboard': '仪表板',
-  '/subjects': '业务事件登记',
+  '/subjects': '消息主题登记',
   '/events': '事件发布中心',
   '/subscriptions': '事件订阅中心',
   '/logs': '业务事件日志',
