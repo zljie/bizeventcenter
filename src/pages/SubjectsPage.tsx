@@ -453,26 +453,11 @@ export default function SubjectsPage() {
             ]}
           >
             <Input.TextArea 
-              placeholder="请详细描述该业务事件的用途和影响范围" 
+              placeholder="请详细描述该业务事件的用途、使用场景和影响范围" 
               rows={3}
             />
           </Form.Item>
 
-          
-
-          <Form.Item
-            label="使用场景"
-            name="usageScenario"
-            rules={[
-              { required: true, message: '请输入使用场景' },
-              { min: 10, message: '使用场景描述至少需要10个字符，描述该事件在业务流程中的应用场景和业务价值' }
-            ]}
-          >
-            <Input.TextArea 
-              placeholder="描述该事件在业务流程中的应用场景和业务价值" 
-              rows={3}
-            />
-          </Form.Item>
 
           <Form.Item
             label="消息参数"
